@@ -176,7 +176,7 @@ public class MainImport {
                 t_item.setCost_price(excel_item.getCost_price());
                 t_item.setStatus(1);        //上架
                 t_item.setVersion("0.00");
-                t_item.setWap_url("/pages/goods-detail.html?itemId=" + map_item_cnt);
+                t_item.setWap_url("http://static.caitu99.com/pages/goods-detail.html?itemId=" + map_item_cnt);
 
 
                 String picurl = null;
@@ -190,7 +190,11 @@ public class MainImport {
 
                 String content = t_item.getContent();
                 if (content != null) {
-                    t_item.setContent(anlsContent(content, brand.getBrand_no(), t_item.getItem_no(),t_item.getItem_id(),outputStream));
+                    String url = "http://static.caitu99.com/list_page/store_list.html?brandid=";
+                    String context = anlsContent(content, brand.getBrand_no(), t_item.getItem_no(),t_item.getItem_id(),outputStream);
+                    context = context.replaceAll("\\*\\*\\*","<a href=\""+url+brand.getBrand_id()+"\">点击查看门店列表<a>");
+
+                    t_item.setContent(context);
                 }
 
 
