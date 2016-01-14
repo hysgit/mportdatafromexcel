@@ -14,7 +14,7 @@ public class T_item {
     private Long sale_price;//SALE_PRICE;        //   bigint not null comment '售价(单位：财分) 细项最低价',
     private Long market_price;//MARKET_PRICE;      //   bigint comment '市场价（单位：分，RMB）',
     private Long sale_volume;//SALE_VOLUME ;     //    bigint default 0 comment '月销量(仅显示)',
-    private Long cost_price;
+    private Long cost_price;                            //成本价
     private String content;//CONTENT   ;     ///      longtext comment '内容',
     private String version;//VERSION  ;     //       varchar(64) not null comment '版本',
     private Integer status;//STATUS  ;     //        int not null comment '商品状态  -1 删除 0 下架 1上架',
@@ -25,6 +25,33 @@ public class T_item {
     private String pic_url;         //          商品头像
     private Date create_time;//CREATE_TIME ;      //   datetime not null comment '创建时间',
     private Date update_time;//UPDATE_TIME  ;    //    datetime not null comment '修改时间',
+    private Integer source;                 //@商品类型，1:自己的商品，2: 为其他商家引流的商品,3.移动商城
+    private String sales_type;              //@销售方式（1001、财分 1002、人民币 2001、自带积分 2002、积分+rmb )
+    private Integer limit_num;
+
+    public Integer getLimit_num() {
+        return limit_num;
+    }
+
+    public void setLimit_num(Integer limit_num) {
+        this.limit_num = limit_num;
+    }
+
+    public Integer getSource() {
+        return source;
+    }
+
+    public void setSource(Integer source) {
+        this.source = source;
+    }
+
+    public String getSales_type() {
+        return sales_type;
+    }
+
+    public void setSales_type(String sales_type) {
+        this.sales_type = sales_type;
+    }
 
     public Long getCost_price() {
         return cost_price;

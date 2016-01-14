@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +29,13 @@ public class TestPattern {
             System.out.println(group);
             logger.debug("group: {}", group);
         }
+
+    }
+
+    @Test
+    public void test2() {
+        Date date = new Date(1445097600000L);
+        System.out.println(date.toLocaleString());
 
     }
 }
