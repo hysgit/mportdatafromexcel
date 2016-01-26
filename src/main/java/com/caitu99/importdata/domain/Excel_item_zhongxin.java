@@ -3,7 +3,7 @@ package com.caitu99.importdata.domain;
 /**
  * Created by Lion on 2015/11/24 0024.
  */
-public class Excel_item_china_mobile {
+public class Excel_item_zhongxin {
     private Long id;
     private String brand_name;
     private String pruduct_name;
@@ -25,6 +25,51 @@ public class Excel_item_china_mobile {
     private String payType;     //支付类型
     private String warename;        //商品名称 第24条数据开始，后面添加（立即生效）
     private Long base_value;        //需要的分值
+    private String goods_payway_id;
+    private String vendor_id;
+    private String vendor_nm;
+    private String type_id;
+    private String goods_nm;
+
+    public String getGoods_nm() {
+        return goods_nm;
+    }
+
+    public void setGoods_nm(String goods_nm) {
+        this.goods_nm = goods_nm;
+    }
+
+    public String getGoods_payway_id() {
+        return goods_payway_id;
+    }
+
+    public void setGoods_payway_id(String goods_payway_id) {
+        this.goods_payway_id = goods_payway_id;
+    }
+
+    public String getVendor_id() {
+        return vendor_id;
+    }
+
+    public void setVendor_id(String vendor_id) {
+        this.vendor_id = vendor_id;
+    }
+
+    public String getVendor_nm() {
+        return vendor_nm;
+    }
+
+    public void setVendor_nm(String vendor_nm) {
+        this.vendor_nm = vendor_nm;
+    }
+
+    public String getType_id() {
+        return type_id;
+    }
+
+    public void setType_id(String type_id) {
+        this.type_id = type_id;
+    }
 
     public String getWarepic() {
         return warepic;
