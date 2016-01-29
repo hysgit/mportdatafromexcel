@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 中信商城特卖商品数据导入
+ * 闪修侠商品数据导入
  */
 
 public class MainImport8 {
