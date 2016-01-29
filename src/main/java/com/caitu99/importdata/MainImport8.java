@@ -30,7 +30,7 @@ public class MainImport8 {
     private static Map<String, T_area_store> map_area_store = new HashMap<>();   //适用的地区数据，以品牌code、省、城市、店名、地址、电话连接起来为key
     private static Long map_area_store_cnt = 24000L;
 
-    private static Map<String, T_item_temai> map_item = new HashMap<>();      //兑换商品表 以商品代码为key
+    private static Map<String, T_item> map_item = new HashMap<>();      //兑换商品表 以商品代码为key
     private static Long map_item_cnt = 24000L;
 
     private static Map<String, T_sku> map_sku = new HashMap<>();        //商品明细表以item_id和SALE_PRICE联合为ky
@@ -88,7 +88,7 @@ public class MainImport8 {
         OutputStream out_good_prop = new FileOutputStream("/home/hy/work/sql/sqlsh/shanxiuxia/good_prop.sql");
 
         //加载xlsx文件
-        InputStream inputStream = new FileInputStream("/home/hy/work/数据/年底采购 _闪修侠/年底采购.xlsx");
+        InputStream inputStream = new FileInputStream("/home/hy/work/数据/年底采购_闪修侠/年底采购.xlsx");
         Workbook wb = new XSSFWorkbook(inputStream);
 
         //没有兑换券
@@ -108,7 +108,7 @@ public class MainImport8 {
             logger.debug("开始解析第{}行.......", i);
             //item
             String pruductCode = excel_item.getPruduct_code();      //商品编码为key
-            T_item_temai t_item = map_item.get(pruductCode);
+            T_item t_item = map_item.get(pruductCode);
             if (t_item == null) {
                 //品牌
                 String brandCode = excel_item.getBrand_code();
@@ -201,7 +201,7 @@ public class MainImport8 {
                 }
 
                 //构建商品
-                t_item = new T_item_temai();
+                t_item = new T_item();
                 t_item.setItem_no(pruductCode);     //商品编码
                 t_item.setBrand_id(brand.getBrand_id());    //品牌id
                 t_item.setTitle(excel_item.getPruduct_name());  //商品名
@@ -472,15 +472,17 @@ public class MainImport8 {
 
 
 
-            item.setPic(row.getCell(10).getStringCellValue());                           //图片类型 K
-            Cell cell = row.getCell(11);
+            item.setPic(row.getCell(8).getStringCellValue());                           //图片类型 K
+
+            Cell cell = row.getCell(9);
             if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK)
                 item.setMonth_sale(null);        //月销量
             else
-                item.setMonth_sale((long) row.getCell(11).getNumericCellValue());        //月销量  L
-            item.setPruduct_type(row.getCell(12).getStringCellValue());                 //商品类型 类别   M
+                item.setMonth_sale((long) cell.getNumericCellValue());        //月销量  L
 
-            Cell cell2 = row.getCell(13);
+            item.setPruduct_type(row.getCell(10).getStringCellValue());                 //商品类型 类别   M
+
+            Cell cell2 = row.getCell(11);
             if (cell2 != null && cell2.getCellType() == Cell.CELL_TYPE_STRING)
                 item.setRange(cell2.getStringCellValue());         //是否有范围  N
             else
@@ -496,7 +498,7 @@ public class MainImport8 {
 //        }
 
 
-            Cell cell3 = row.getCell(17);                                       //详细信息 R
+            Cell cell3 = row.getCell(12);                                       //详细信息 R
             if (cell3 != null && cell3.getCellType() == Cell.CELL_TYPE_STRING)
                 item.setContent(cell3.getStringCellValue());
             else {
@@ -609,13 +611,12 @@ public class MainImport8 {
         return sb.toString();
     }
 
-    private static String genertorSqlForT_item(T_item_temai t_item) {
+    private static String genertorSqlForT_item(T_item t_item) {
         StringBuilder sb = new StringBuilder();
         sb.append("insert into `caitu99`.`t_item`(`ITEM_ID`, `TITLE`, `ITEM_NO`, `BRAND_ID`, `SALE_PRICE`, " +
                 "`MARKET_PRICE`, `SALE_VOLUME`, `CONTENT`, `VERSION`, `STATUS`," +
                 "`LIST_TIME`, `WAP_URL`, `SORT`, `PIC_URL`, `CREATE_TIME`, `UPDATE_TIME`," +
-                "`source`,`sales_type`,`limit_num`,`item_type`,`is_free_trade`," +
-                "`discount`,`free_trade_price`,`exchange_price`) values(");
+                "`source`,`sales_type`,`limit_num`) values(");
         sb.append(t_item.getItem_id() + ", ");
         sb.append("'" + t_item.getTitle() + "', ");
         sb.append("'" + t_item.getItem_no() + "',");
@@ -636,12 +637,8 @@ public class MainImport8 {
         }
         sb.append("now(),now(),");
         sb.append(t_item.getSource() + ",");
-        sb.append("2001,");     //销售方式，2001：自带积分
-        sb.append(t_item.getLimit_num() + ",");
-        sb.append("2,1,");
-        sb.append("'"+t_item.getDiscount()+"',");        //折扣
-        sb.append(t_item.getExchange_price()+",");      //自由交易的价格（购买特价商品时的财分价格，单位积分）',
-        sb.append(t_item.getExchange_price());  //积分兑财分时，能兑多少钱（单位财分）',
+        sb.append("1001,");     //销售方式，1001：自带积分
+        sb.append(t_item.getLimit_num());
         sb.append(");\r\n");
 
         return sb.toString();
@@ -732,8 +729,8 @@ public class MainImport8 {
     }
 
     private static String anlsImgGoods(String brandCode, String productCode, String imgtype, OutputStream out, String tabname, Long productid) throws IOException {
-        String path = "/home/hy/work/数据/中信特卖商品/img/";
-        String imgstore = "/home/hy/workspace/wrksp1/importdata/zhongxin_temai";
+        String path = "/home/hy/work/数据/年底采购_闪修侠/img/";
+        String imgstore = "/home/hy/workspace/wrksp1/importdata/shanxiuxia";
         String returl = null;
         Integer cnt = 1;
 //        while(true) {
@@ -791,8 +788,8 @@ public class MainImport8 {
         Matcher matcher = pattern.matcher(content);
         while (matcher.find()) {
             String group = matcher.group(0);
-            String path = "/home/hy/work/数据/中信特卖商品";
-            String imgstore = "/home/hy/workspace/wrksp1/importdata/zhongxin_temai";
+            String path = "/home/hy/work/数据/年底采购_闪修侠";
+            String imgstore = "/home/hy/workspace/wrksp1/importdata/shanxiuxia";
             File file = new File(path + group);
             if (file.exists()) {
                 try {
