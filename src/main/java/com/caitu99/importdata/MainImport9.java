@@ -1,7 +1,6 @@
 package com.caitu99.importdata;
 
 import com.caitu99.importdata.domain.*;
-import com.sun.xml.internal.ws.api.message.ExceptionHasMessage;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -13,51 +12,50 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 中信商城特卖商品数据导入
+ * Godiva巧克力条 和
+ * 1号店100面值电子礼品卡
+ * 商品数据导入
  */
 
-public class MainImport5 {
-    private static final Logger logger = LoggerFactory.getLogger(MainImport5.class);
+public class MainImport9 {
+    private static final Logger logger = LoggerFactory.getLogger(MainImport9.class);
     // private static ApplicationContext applicationContext  = new ClassPathXmlApplicationContext("classpath:spring.xml");
     // private static T_brandService t_brandService = applicationContext.getBean(T_brandService.class);
     private static Map<String, T_brand> map_brand = new HashMap<>();       //品牌 以品牌code为key
-    private static Long map_brand_cnt = 23000L;
+    private static Long map_brand_cnt = 24001L;
 
     private static Map<String, T_area_store> map_area_store = new HashMap<>();   //适用的地区数据，以品牌code、省、城市、店名、地址、电话连接起来为key
-    private static Long map_area_store_cnt = 23000L;
+    private static Long map_area_store_cnt = 24001L;
 
-    private static Map<String, T_item_temai> map_item = new HashMap<>();      //兑换商品表 以商品代码为key
-    private static Long map_item_cnt = 23000L;
+    private static Map<String, T_item> map_item = new HashMap<>();      //兑换商品表 以商品代码为key
+    private static Long map_item_cnt = 24001L;
 
     private static Map<String, T_sku> map_sku = new HashMap<>();        //商品明细表以item_id和SALE_PRICE联合为ky
-    private static Long map_sku_cnt = 23000L;
+    private static Long map_sku_cnt = 24001L;
 
     private static Map<String, T_stock> map_stock = new HashMap<>();   //商品库存表 以item_id 和SKU_ID CODE为key
-    private static Long map_stock_cnt = 23000L;
+    private static Long map_stock_cnt = 25000L;
 
     private static Map<String, T_type> map_type = new HashMap<>();      //类型 类型名为key
-    private static Long map_type_cnt = 23000L;
+    private static Long map_type_cnt = 24001L;
 
     private static Map<String, T_type_item_relation> map_type_item_relation = new HashMap<>(); //item_id和type_id连接为key
-    private static Long map_type_item_relation_cnt = 23000L;
+    private static Long map_type_item_relation_cnt = 24001L;
 
-    private static Long good_prop_id_cnt = 21000L;
+    private static Long good_prop_id_cnt = 22000L;
 
     private static Map<String, Attach_file> map_file = new HashMap<>();
-    private static Long map_file_cnt = 23000L;
+    private static Long map_file_cnt = 24001L;
 
     public static void main(String[] args) throws Exception {
-        InputStream inputStream = MainImport5.class.getClassLoader().getResourceAsStream("log4j.properties");
+        InputStream inputStream = MainImport9.class.getClassLoader().getResourceAsStream("log4j.properties");
         PropertyConfigurator.configure(inputStream);
-        logger.debug("中信商城特卖商品数据导入");
+        logger.debug("新增1个商品数据导入");
         logger.info("开始处理数据.....");
         importDataToSQLFile();
 
@@ -66,12 +64,12 @@ public class MainImport5 {
     public static void importDataToSQLFile() throws Exception {
 
         int wareCnt = 0;
-        File file1 = new File("/home/hy/workspace/wrksp1/importdata/zhongxin_temai/UBB");
+        File file1 = new File("/home/hy/workspace/wrksp1/importdata/xin2/UBB");
         if (file1.exists()) {
             deleteFile(file1);
             logger.debug("删除UBB成功");
         }
-        File file2 = new File("/home/hy/workspace/wrksp1/importdata/zhongxin_temai/GOODS");
+        File file2 = new File("/home/hy/workspace/wrksp1/importdata/xin2/GOODS");
         if (file2.exists()) {
             deleteFile(file2);
             logger.debug("删除GOODS成功");
@@ -82,21 +80,21 @@ public class MainImport5 {
 //            logger.error("删除zhongxinStore.sql成功");
 //        }
 
-        OutputStream outputStream = new FileOutputStream("/home/hy/work/sql/sqlsh/zhongxin_temai/Store.sql");
-        OutputStream out_item = new FileOutputStream("/home/hy/work/sql/sqlsh/zhongxin_temai/item.sql");
-        OutputStream out_brand = new FileOutputStream("/home/hy/work/sql/sqlsh/zhongxin_temai/brand.sql");
-        OutputStream out_attach_file = new FileOutputStream("/home/hy/work/sql/sqlsh/zhongxin_temai/attach_file.sql");
-        OutputStream out_type = new FileOutputStream("/home/hy/work/sql/sqlsh/zhongxin_temai/type.sql");
-        OutputStream out_sku = new FileOutputStream("/home/hy/work/sql/sqlsh/zhongxin_temai/sku.sql");
-        OutputStream out_type_item_relation = new FileOutputStream("/home/hy/work/sql/sqlsh/zhongxin_temai/type_item_relation.sql");
-        OutputStream out_good_prop = new FileOutputStream("/home/hy/work/sql/sqlsh/zhongxin_temai/good_prop.sql");
+        OutputStream outputStream = new FileOutputStream("/home/hy/work/sql/sqlsh/xin2/Store.sql");
+        OutputStream out_item = new FileOutputStream("/home/hy/work/sql/sqlsh/xin2/item.sql");
+        OutputStream out_brand = new FileOutputStream("/home/hy/work/sql/sqlsh/xin2/brand.sql");
+        OutputStream out_attach_file = new FileOutputStream("/home/hy/work/sql/sqlsh/xin2/attach_file.sql");
+        OutputStream out_type = new FileOutputStream("/home/hy/work/sql/sqlsh/xin2/type.sql");
+        OutputStream out_sku = new FileOutputStream("/home/hy/work/sql/sqlsh/xin2/sku.sql");
+        OutputStream out_type_item_relation = new FileOutputStream("/home/hy/work/sql/sqlsh/xin2/type_item_relation.sql");
+        OutputStream out_good_prop = new FileOutputStream("/home/hy/work/sql/sqlsh/xin2/good_prop.sql");
 
         //加载xlsx文件
-        InputStream inputStream = new FileInputStream("/home/hy/work/数据/中信特卖商品/prod.xlsx");
+        InputStream inputStream = new FileInputStream("/home/hy/work/数据/年底采购_xin2/年底采购.xlsx");
         Workbook wb = new XSSFWorkbook(inputStream);
 
         //没有兑换券
-        //LinkedList<Coupon> stocks = getAllCode(wb);     //获取到所有的兑换券
+        LinkedList<Coupon> stocks = getAllCode(wb);     //获取到所有的兑换券
         Sheet sheet0 = wb.getSheetAt(0);
         int x = sheet0.getLastRowNum();
         String sql = null;
@@ -108,11 +106,11 @@ public class MainImport5 {
                 break;
             }
 
-            Excel_item_zhongxin_temai excel_item = getRowData(row);    //解析一行的数据
+            Excel_item excel_item = getRowData(row);    //解析一行的数据
             logger.debug("开始解析第{}行.......", i);
             //item
             String pruductCode = excel_item.getPruduct_code();      //商品编码为key
-            T_item_temai t_item = map_item.get(pruductCode);
+            T_item t_item = map_item.get(pruductCode);
             if (t_item == null) {
                 //品牌
                 String brandCode = excel_item.getBrand_code();
@@ -195,7 +193,12 @@ public class MainImport5 {
                         tType.setId(10001L);
                     } else if (type.equals("娱乐")) {
                         tType.setId(10003L);
-                    } else {
+                    }
+                    else if(type.equals("购物"))
+                    {
+                        tType.setId(10002L);
+                    }
+                    else {
                         tType.setId(++map_type_cnt);
                         sql = genertorSqlForT_type(tType);
                         out_type.write(sql.getBytes());
@@ -205,11 +208,11 @@ public class MainImport5 {
                 }
 
                 //构建商品
-                t_item = new T_item_temai();
+                t_item = new T_item();
                 t_item.setItem_no(pruductCode);     //商品编码
                 t_item.setBrand_id(brand.getBrand_id());    //品牌id
                 t_item.setTitle(excel_item.getPruduct_name());  //商品名
-                t_item.setSort(excel_item.getId() + 13000); //排序      13000 中信特卖
+                t_item.setSort(excel_item.getId() + 14001); //排序      14001 新增2个
                 t_item.setContent(excel_item.getContent());
                 t_item.setItem_id(++map_item_cnt);
                 t_item.setMarket_price(excel_item.getMarket_price());//市场价
@@ -218,11 +221,9 @@ public class MainImport5 {
                 t_item.setCost_price(excel_item.getCost_price());
                 t_item.setStatus(1);                    //上架
                 t_item.setVersion("0.00");
-                t_item.setLimit_num(excel_item.getLimitedNum());
+                t_item.setLimit_num(1);
                 t_item.setWap_url("/pages/goods-detail.html?itemId=" + map_item_cnt);
-                t_item.setDiscount(excel_item.getDiscount());
-                t_item.setExchange_price(excel_item.getExchange_price());
-                t_item.setFree_trade_price(excel_item.getFree_trade_price());
+
 
                 String picurl = null;
                 //处理商品图片
@@ -235,98 +236,17 @@ public class MainImport5 {
                 String content = t_item.getContent();
                 if (content != null) {
                     String url = "http://static.caitu99.com/list_page/store_list.html?brandid=";
-                    String context = anlsContent(content, brand.getBrand_no(), t_item.getItem_no(), t_item.getItem_id(), out_attach_file);
+                    String context = anlsContent(content, brand.getBrand_no(), t_item.getItem_no(), t_item.getItem_id(), outputStream);
                     context = context.replaceAll("\\*\\*\\*", "<a href=\"" + url + brand.getBrand_id() + "\">点击查看门店列表<a>");
 
                     t_item.setContent(context);
                 }
 
-                t_item.setSource(6);        //6：中信商城特卖商品
-                t_item.setSales_type("2001");       //自带积分
+                t_item.setSource(1);        //1：自己商城商品
+                t_item.setSales_type("1001");       //财分
                 map_item.put(t_item.getItem_no(), t_item);
                 sql = genertorSqlForT_item(t_item);
                 out_item.write(sql.getBytes());
-
-                //处理属性
-                Good_prop good_prop = new Good_prop();
-                good_prop.setId(++good_prop_id_cnt);
-                good_prop.setCode("1001"); //编码
-                good_prop.setItem_id(t_item.getItem_id());
-                good_prop.setPropName("goods_id");
-                Pattern pattern = Pattern.compile("(?<=https://creditcard\\.ecitic\\.com/eshop/goods/)[A-Z0-9]{7}(?=/[A-Z0-9]{7}\\.htm)");
-                Matcher matcher = pattern.matcher(excel_item.getLink());
-                if (matcher.find()) {
-                    good_prop.setValue(matcher.group());
-                } else {
-                    logger.error("未获取到商品的wareid");
-                    System.exit(0);
-                }
-                good_prop.setGroup(1);
-                good_prop.setSort(1);
-                sql = genertorSqlForT_good_prop(good_prop);
-                out_good_prop.write(sql.getBytes());
-
-                //goods_payway_id
-                Good_prop good_prop2 = new Good_prop();
-                good_prop2.setId(++good_prop_id_cnt);
-                good_prop2.setCode("1002"); //编码
-                good_prop2.setItem_id(t_item.getItem_id());
-                good_prop2.setPropName("goods_payway_id");
-                good_prop2.setValue(excel_item.getGoods_payway_id());
-                good_prop2.setGroup(2);
-                good_prop2.setSort(2);
-                sql = genertorSqlForT_good_prop(good_prop2);
-                out_good_prop.write(sql.getBytes());
-
-
-                //vendor_id
-                Good_prop good_prop3 = new Good_prop();
-                good_prop3.setId(++good_prop_id_cnt);
-                good_prop3.setCode("1003"); //编码
-                good_prop3.setItem_id(t_item.getItem_id());
-                good_prop3.setPropName("vendor_id");
-                good_prop3.setValue(excel_item.getVendor_id());
-                good_prop3.setGroup(3);
-                good_prop3.setSort(3);
-                sql = genertorSqlForT_good_prop(good_prop3);
-                out_good_prop.write(sql.getBytes());
-
-                //vendor_nm
-                Good_prop good_prop4 = new Good_prop();
-                good_prop4.setId(++good_prop_id_cnt);
-                good_prop4.setCode("1004"); //编码
-                good_prop4.setItem_id(t_item.getItem_id());
-                good_prop4.setPropName("vendor_nm");
-                good_prop4.setValue(excel_item.getVendor_nm());
-                good_prop4.setGroup(4);
-                good_prop4.setSort(4);
-                sql = genertorSqlForT_good_prop(good_prop4);
-                out_good_prop.write(sql.getBytes());
-
-                //type_id
-                Good_prop good_prop5 = new Good_prop();
-                good_prop5.setId(++good_prop_id_cnt);
-                good_prop5.setCode("1005"); //编码
-                good_prop5.setItem_id(t_item.getItem_id());
-                good_prop5.setPropName("type_id");
-                good_prop5.setValue(excel_item.getType_id());
-                good_prop5.setGroup(5);
-                good_prop5.setSort(5);
-                sql = genertorSqlForT_good_prop(good_prop5);
-                out_good_prop.write(sql.getBytes());
-
-                //goods_nm
-                Good_prop good_prop6 = new Good_prop();
-                good_prop6.setId(++good_prop_id_cnt);
-                good_prop6.setCode("1006"); //商品名称
-                good_prop6.setItem_id(t_item.getItem_id());
-                good_prop6.setPropName("goods_nm");
-                good_prop6.setValue(t_item.getTitle());
-                good_prop6.setGroup(6);
-                good_prop6.setSort(6);
-                sql = genertorSqlForT_good_prop(good_prop6);
-                out_good_prop.write(sql.getBytes());
-
 
                 //处理商品明细
                 String key = t_item.getItem_id() + "_" + t_item.getSale_price();
@@ -349,31 +269,31 @@ public class MainImport5 {
 
                 }
 
-//                //处理商品兑换码
-//                Iterator<Coupon> iter = stocks.iterator();
-//                while (iter.hasNext()) {
-//                    Coupon coupon = iter.next();
-//                    if (coupon.getPruduct_code().equals(t_item.getItem_no())) {
-//                        String key2 = coupon.getPruduct_code() + "" + coupon.getCode();
-//                        T_stock t_stock = map_stock.get(key2);
-//                        if (t_stock == null) {
-//                            t_stock = new T_stock();
-//                            t_stock.setItem_id(t_item.getItem_id());
-//                            t_stock.setSku_id(t_sku.getSku_id());
-//                            t_stock.setCode(coupon.getCode());
-//                            t_stock.setPassword(coupon.getPassword());
-//                            t_stock.setStatus(1);
-//                            t_stock.setVersion("0.00");
-//                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//                            t_stock.setEffective_time(sdf.parse(coupon.getEffective_time()));
-//                            t_stock.setStock_id(++map_stock_cnt);
-//                            map_stock.put(key2, t_stock);
-//                            sql = genertorSqlForT_stock(t_stock);
-//                            outputStream.write(sql.getBytes());
-//                        }
-//                        iter.remove();
-//                    }
-//                }
+                //处理商品兑换码
+                Iterator<Coupon> iter = stocks.iterator();
+                while (iter.hasNext()) {
+                    Coupon coupon = iter.next();
+                    if (coupon.getPruduct_code().equals(t_item.getItem_no())) {
+                        String key2 = coupon.getPruduct_code() + "" + coupon.getCode();
+                        T_stock t_stock = map_stock.get(key2);
+                        if (t_stock == null) {
+                            t_stock = new T_stock();
+                            t_stock.setItem_id(t_item.getItem_id());
+                            t_stock.setSku_id(t_sku.getSku_id());
+                            t_stock.setCode(coupon.getCode());
+                            t_stock.setPassword(coupon.getPassword());
+                            t_stock.setStatus(1);
+                            t_stock.setVersion("0.00");
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            t_stock.setEffective_time(sdf.parse(coupon.getEffective_time()));
+                            t_stock.setStock_id(++map_stock_cnt);
+                            map_stock.put(key2, t_stock);
+                            sql = genertorSqlForT_stock(t_stock);
+                            outputStream.write(sql.getBytes());
+                        }
+                        iter.remove();
+                    }
+                }
 
                 //这个要最后处理
                 //处理商品和类型的关系
@@ -519,9 +439,9 @@ public class MainImport5 {
     }
 
 
-    private static Excel_item_zhongxin_temai getRowData(Row row) {
+    private static Excel_item getRowData(Row row) {
         try {
-            Excel_item_zhongxin_temai item = new Excel_item_zhongxin_temai();
+            Excel_item item = new Excel_item();
             //读取一行数据
 
             item.setId((long) row.getCell(0).getNumericCellValue());    //id A
@@ -555,24 +475,21 @@ public class MainImport5 {
             item.setSale_price((long) row.getCell(6).getNumericCellValue());                //单价 G
             //item.setBase_value((long) row.getCell(6).getNumericCellValue());                //base_value
 
-            item.setFree_trade_price((long) row.getCell(7).getNumericCellValue());      //积分价
+            item.setMarket_price((long) row.getCell(7).getNumericCellValue());        //市场价 H
 
-            item.setMarket_price((long) row.getCell(9).getNumericCellValue());        //市场价 H
 
-            item.setDiscount(row.getCell(10).getStringCellValue());      //折扣    I
 
-            item.setExchange_price((long) row.getCell(11).getNumericCellValue());     //财分价值  J
+            item.setPic(row.getCell(8).getStringCellValue());                           //图片类型 K
 
-            item.setPic(row.getCell(12).getStringCellValue());                           //图片类型 K
-
-            Cell cell = row.getCell(13);
+            Cell cell = row.getCell(9);
             if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK)
                 item.setMonth_sale(null);        //月销量
             else
-                item.setMonth_sale((long) row.getCell(13).getNumericCellValue());        //月销量  L
-            item.setPruduct_type(row.getCell(14).getStringCellValue());                 //商品类型 类别   M
+                item.setMonth_sale((long) cell.getNumericCellValue());        //月销量  L
 
-            Cell cell2 = row.getCell(15);
+            item.setPruduct_type(row.getCell(10).getStringCellValue());                 //商品类型 类别   M
+
+            Cell cell2 = row.getCell(11);
             if (cell2 != null && cell2.getCellType() == Cell.CELL_TYPE_STRING)
                 item.setRange(cell2.getStringCellValue());         //是否有范围  N
             else
@@ -586,61 +503,11 @@ public class MainImport5 {
 //            logger.error("限制数量错误,{}", row);
 //            throw new RuntimeException("限制数量有误");
 //        }
-            item.setLimitedNum(99999999);       //O
-
-            //属性 P
-            Cell cellProperties = row.getCell(17);
-            if (cellProperties != null && cellProperties.getCellType() == Cell.CELL_TYPE_STRING) {
-                item.setProperties(cellProperties.getStringCellValue());
-            } else {
-                logger.error("属性错误");
-                throw new RuntimeException("属性错误");
-            }
-            //链接    Q
-            Cell cellLink = row.getCell(18);
-            if (cellLink != null && cellLink.getCellType() == Cell.CELL_TYPE_STRING) {
-                item.setLink(cellLink.getStringCellValue());
-            } else {
-                logger.error("链接错误");
-                throw new RuntimeException("链接错误");
-            }
 
 
-            Cell cell3 = row.getCell(19);                                       //详细信息 R
+            Cell cell3 = row.getCell(12);                                       //详细信息 R
             if (cell3 != null && cell3.getCellType() == Cell.CELL_TYPE_STRING)
                 item.setContent(cell3.getStringCellValue());
-            else {
-                logger.error("商品详情出错");
-                throw new RuntimeException("商品详情出错");
-            }
-
-            cell = row.getCell(20);                                       //goods_payway_id S
-            if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING)
-                item.setGoods_payway_id(cell.getStringCellValue());
-            else {
-                logger.error("商品详情出错");
-                throw new RuntimeException("商品详情出错");
-            }
-
-            cell = row.getCell(21);                                       //vendor_id T
-            if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING)
-                item.setVendor_id(cell.getStringCellValue());
-            else {
-                logger.error("商品详情出错");
-                throw new RuntimeException("商品详情出错");
-            }
-
-            cell = row.getCell(22);                                       //vendor_nm   U
-            if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING)
-                item.setVendor_nm(cell.getStringCellValue());
-            else {
-                logger.error("商品详情出错");
-                throw new RuntimeException("商品详情出错");
-            }
-
-            cell = row.getCell(23);                                       //type_id V
-            if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING)
-                item.setType_id(cell.getStringCellValue());
             else {
                 logger.error("商品详情出错");
                 throw new RuntimeException("商品详情出错");
@@ -751,13 +618,12 @@ public class MainImport5 {
         return sb.toString();
     }
 
-    private static String genertorSqlForT_item(T_item_temai t_item) {
+    private static String genertorSqlForT_item(T_item t_item) {
         StringBuilder sb = new StringBuilder();
         sb.append("insert into `caitu99`.`t_item`(`ITEM_ID`, `TITLE`, `ITEM_NO`, `BRAND_ID`, `SALE_PRICE`, " +
                 "`MARKET_PRICE`, `SALE_VOLUME`, `CONTENT`, `VERSION`, `STATUS`," +
                 "`LIST_TIME`, `WAP_URL`, `SORT`, `PIC_URL`, `CREATE_TIME`, `UPDATE_TIME`," +
-                "`source`,`sales_type`,`limit_num`,`item_type`,`is_free_trade`," +
-                "`discount`,`free_trade_price`,`exchange_price`) values(");
+                "`source`,`sales_type`,`limit_num`) values(");
         sb.append(t_item.getItem_id() + ", ");
         sb.append("'" + t_item.getTitle() + "', ");
         sb.append("'" + t_item.getItem_no() + "',");
@@ -778,12 +644,8 @@ public class MainImport5 {
         }
         sb.append("now(),now(),");
         sb.append(t_item.getSource() + ",");
-        sb.append("2001,");     //销售方式，2001：自带积分
-        sb.append(t_item.getLimit_num() + ",");
-        sb.append("2,1,");
-        sb.append("'"+t_item.getDiscount()+"',");        //折扣
-        sb.append(t_item.getFree_trade_price()+",");      //自由交易的价格（购买特价商品时的财分价格，单位积分）',
-        sb.append(t_item.getExchange_price());  //积分兑财分时，能兑多少钱（单位财分）',
+        sb.append("1001,");     //销售方式，1001：自带积分
+        sb.append(t_item.getLimit_num());
         sb.append(");\r\n");
 
         return sb.toString();
@@ -874,8 +736,8 @@ public class MainImport5 {
     }
 
     private static String anlsImgGoods(String brandCode, String productCode, String imgtype, OutputStream out, String tabname, Long productid) throws IOException {
-        String path = "/home/hy/work/数据/中信特卖商品/img/";
-        String imgstore = "/home/hy/workspace/wrksp1/importdata/zhongxin_temai";
+        String path = "/home/hy/work/数据/年底采购_xin2/img/";
+        String imgstore = "/home/hy/workspace/wrksp1/importdata/xin2";
         String returl = null;
         Integer cnt = 1;
 //        while(true) {
@@ -933,8 +795,8 @@ public class MainImport5 {
         Matcher matcher = pattern.matcher(content);
         while (matcher.find()) {
             String group = matcher.group(0);
-            String path = "/home/hy/work/数据/中信特卖商品";
-            String imgstore = "/home/hy/workspace/wrksp1/importdata/zhongxin_temai";
+            String path = "/home/hy/work/数据/年底采购_闪修侠";
+            String imgstore = "/home/hy/workspace/wrksp1/importdata/xin2";
             File file = new File(path + group);
             if (file.exists()) {
                 try {
@@ -964,7 +826,7 @@ public class MainImport5 {
                     attach_file.setSort(cnt++);
                     map_file.put(url, attach_file);
                     String sql2 = genertorSqlForAttach_file(attach_file);
-                    out.write(sql2.getBytes());
+                    //   out.write(sql2.getBytes());
                     input.close();
 
                 } catch (IOException e) {
