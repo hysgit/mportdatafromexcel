@@ -555,9 +555,9 @@ public class MainImport5 {
             item.setSale_price((long) row.getCell(6).getNumericCellValue());                //单价 G
             //item.setBase_value((long) row.getCell(6).getNumericCellValue());                //base_value
 
-            item.setFree_trade_price((long) row.getCell(7).getNumericCellValue());      //积分价
+            item.setFree_trade_price((long) row.getCell(7).getNumericCellValue());          //积分价
 
-            item.setMarket_price((long) row.getCell(9).getNumericCellValue());        //市场价 H
+            item.setMarket_price(((long) row.getCell(9).getNumericCellValue())*100);        //市场价 H
 
             item.setDiscount(row.getCell(10).getStringCellValue());      //折扣    I
 
